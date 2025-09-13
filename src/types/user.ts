@@ -2,7 +2,7 @@ export type TUser = {
     userId?: number
     sendbirdId?: string
     nickname: string
-    profileUrl: string
+    profilePhotoUrl: string
     isDeleted?: boolean
     created?: string
     updated?: string

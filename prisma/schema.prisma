@@ -29,7 +29,7 @@ model User {
 	userId				Int     	@id @default(autoincrement())
 	sendbirdId			String?		// User Id from Sendbird
 	nickname			String
-	profileUrl			String
+	profilePhotoUrl		String
 	isDeleted			Boolean		@default(false)
 	created 			DateTime 	@default(now())
 	updated				DateTime 	@updatedAt
