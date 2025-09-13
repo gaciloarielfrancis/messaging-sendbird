@@ -27,6 +27,7 @@ model Channel {
 
 model User {
 	userId				Int     	@id @default(autoincrement())
+	sendbirdId			String?		// User Id from Sendbird
 	nickname			String
 	profileUrl			String
 	isDeleted			Boolean		@default(false)

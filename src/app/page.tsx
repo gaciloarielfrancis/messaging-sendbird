@@ -11,7 +11,7 @@ export default function MessagingApp () {
 	);
 
     return (
-        <div style={{ height: '100vh' }}>
+        <div style={{ height: `100vh` }}>
             <SendbirdApp
                 appId={ process.env.NEXT_PUBLIC_SENDBIRD_APP_ID as string }
                 userId="sendbird_desk_agent_id_cee60c90-bb6f-47f6-96f1-b60649cd886f"
