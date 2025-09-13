@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+	provider = "prisma-client-js"
+	output   = "../src/generated/prisma"
+}
+
+datasource db {
+	provider = "postgresql"
+	url      = env("DATABASE_URL")
+}
+
+model Channel {
+	channelId 			Int     	@id @default(autoincrement())
+	channelUrl 			String		// Url generated from Sendbird
+	createdById 		Int			// userId of the owner of this channel
+	chatMateId 			Int			// userId of chat mate
+	isDeleted 			Boolean		@default(false)
+	totalMessages 		Int			@default(0)
+	created 			DateTime 	@default(now())
+	updated				DateTime 	@updatedAt
+}
+
+model User {
+	userId				Int     	@id @default(autoincrement())
+	nickname			String
+	profileUrl			String
+	isDeleted			Boolean		@default(false)
+	created 			DateTime 	@default(now())
+	updated				DateTime 	@updatedAt
+}
+
+model Message {
+	messageId			Int     	@id @default(autoincrement())
+	channelId			Int
+	senderId			Int
+	message				String
+	isDeleted 			Boolean		@default(false)
+	created 			DateTime 	@default(now())
+	updated				DateTime 	@updatedAt
+}
