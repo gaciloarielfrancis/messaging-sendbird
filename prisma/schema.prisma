@@ -17,8 +17,8 @@ datasource db {
 model Channel {
 	channelId 			Int     	@id @default(autoincrement())
 	channelUrl 			String		// Url generated from Sendbird
-	createdById 		Int			// userId of the owner of this channel
-	chatMateId 			Int			// userId of chat mate
+	createdById 		String		// Sendbird userId of the owner of this channel
+	chatMateId 			String		// Sendbird userId of chat mate
 	isDeleted 			Boolean		@default(false)
 	totalMessages 		Int			@default(0)
 	created 			DateTime 	@default(now())
@@ -37,8 +37,8 @@ model User {
 
 model Message {
 	messageId			Int     	@id @default(autoincrement())
-	channelId			Int
-	senderId			Int
+	channelUrl			String		// [ foreign key ] channelUrl from Channel model 
+	senderId			String		// Sendbird userId of the sender
 	message				String
 	isDeleted 			Boolean		@default(false)
 	created 			DateTime 	@default(now())

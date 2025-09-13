@@ -1,72 +1,51 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import "@sendbird/uikit-react/dist/index.css";
-import type { TUser } from "@/types/user";
-import { useEffect } from "react";
-
-type TSendbirdUser = {
-    userId: string
-    nickname: string
-    plainProfileUrl: string
-}
+import SendbirdProvider from "@sendbird/uikit-react/SendbirdProvider";
+import Chat from "@/components/Chat";
+import { useEffect, useState } from "react";
+import { faker } from "@faker-js/faker";
 
 export default function MessagingApp () {
 
-    const applicationId = process.env.NEXT_PUBLIC_SENDBIRD_APP_ID as string;
+    const appId = process.env.NEXT_PUBLIC_SENDBIRD_APP_ID as string;
     const accessToken = process.env.NEXT_PUBLIC_SENDBIRD_ACCESS_TOKEN as string;
-    const userId = process.env.NEXT_PUBLIC_SENDBIRD_USER_ID as string;
-    const apiToken = process.env.NEXT_PUBLIC_SENDBIRD_API_TOKEN as string;
-	const SendbirdApp = dynamic(
-		async () => (await import("@sendbird/uikit-react")).App,
-		{ ssr: false }
-	);
-
-    function editProfileSuccess (user: TSendbirdUser): void {
-        const { nickname, ...data } = user;
-        saveUserProfile({
-            sendbirdId: data.userId,
-            nickname,
-            profilePhotoUrl: data.plainProfileUrl
-        }, true);
-    }
-
-    async function saveUserProfile (user: TUser, isUpdate: boolean = false): Promise<void> {
-        const response = await fetch(`/api/users`, { 
-            method: isUpdate ? `PATCH` : `POST`, 
-            body: JSON.stringify(user) 
-        });
-        if(response.ok)
-            console.log(!isUpdate ? `Saving profile if not exist was success.` : `Updating profile success.`, response);
-        else console.error(response.statusText);
-    }
+    // const userId = process.env.NEXT_PUBLIC_SENDBIRD_USER_ID as string;
+    const [ userId, setUserId ] = useState<string | null>(null);
 
     useEffect(() => {
-        fetch(`https://api-${ applicationId }.sendbird.com/v3/users/${ userId }`, {
+        const apiToken = process.env.NEXT_PUBLIC_SENDBIRD_API_TOKEN as string;
+        fetch(`https://api-${ appId }.sendbird.com/v3/users`, {
+            method: `POST`,
             headers: {
                 "Api-Token": apiToken,
                 "Content-Type": `application/json`,
-            }
+            },
+            body: JSON.stringify({
+                user_id: new Date().getTime().toString(),
+                nickname: faker.person.fullName(),
+                profile_url: ``
+            })
         }).then(async response => {
             const user = await response.json();
-            saveUserProfile({
-                nickname: user.nickname,
-                profilePhotoUrl: user.profile_url,
-                sendbirdId: user.user_id
-            });
+            setUserId(user.user_id);
+            
         });
-    }, [ applicationId, userId, apiToken ])
+    }, [ appId ])
 
     return (
-        <div style={{ height: `100vh` }}>
-            <SendbirdApp
-                appId={ applicationId }
-                userId={ userId }
-				accessToken={ accessToken }
-                allowProfileEdit={ true }
-                onProfileEditSuccess={ editProfileSuccess }
-                
-            />
-        </div>
+        <>
+            {
+                userId ?
+                <SendbirdProvider
+                    appId={ appId }
+                    userId={ userId }
+                    accessToken={ accessToken }
+                >
+                    <Chat />
+                </SendbirdProvider>
+                : null
+            }
+        </>
+        
     );
 }

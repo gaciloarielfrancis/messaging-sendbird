@@ -1,8 +1,8 @@
 export type TChannel = {
     channelId?: number
     channelUrl: string
-    createdById: number
-    chatMateId: number
+    createdById?: string
+    chatMateId?: string
     isDeleted?: boolean
     totalMessages?: number
     created?: string

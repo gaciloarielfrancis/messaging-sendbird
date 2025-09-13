@@ -1,7 +1,7 @@
 export type TMessage = {
     messageId?: number
-    channelId: number
-    senderId: number
+    channelUrl: string
+    senderId: string
     message: string
     isDeleted?: boolean
     created?: string

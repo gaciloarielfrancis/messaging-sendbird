@@ -9,10 +9,10 @@ export async function GET () {
 
 export async function POST (req: Request) {
     const data = await req.json() as TUser;
-    const existUser = await prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
         where: { sendbirdId: data.sendbirdId },
     });
-    if(!existUser) {
+    if(!user) {
         const newUser = await prisma.user.create({ data });
         return NextResponse.json(newUser);
     }else{

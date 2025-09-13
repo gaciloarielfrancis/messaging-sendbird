@@ -9,21 +9,33 @@ export async function GET () {
 
 export async function POST (req: Request) {
     const data = await req.json() as TMessage;
+    const { channelUrl } = data;
     const newMessage = await prisma.message.create({ data });
+    const channel = await prisma.channel.findFirst({
+        where: { channelUrl },
+    });
+    await prisma.channel.update({
+        where: { channelId: channel?.channelId },
+        data: {
+            totalMessages: {
+                increment: 1
+            }
+        }
+    })
     return NextResponse.json(newMessage);
 }
 
-export async function PATCH (req: Request) {
-    const body = await req.json() as TMessage;
-    const { messageId, ...data } = body;
-    try {
-        await prisma.message.update({
-            where: { messageId }, 
-            data
-        });
-        return NextResponse.json({ success: true, message: `Message was successfully saved.` });
-    } catch (error) {
-        return NextResponse.json(error);
-    }
+// export async function PATCH (req: Request) {
+//     const body = await req.json() as TMessage;
+//     const { messageId, ...data } = body;
+//     try {
+//         await prisma.message.update({
+//             where: { messageId }, 
+//             data
+//         });
+//         return NextResponse.json({ success: true, message: `Message was successfully saved.` });
+//     } catch (error) {
+//         return NextResponse.json(error);
+//     }
     
-}
+// }
